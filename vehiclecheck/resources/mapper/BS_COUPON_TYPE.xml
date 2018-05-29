@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxcoach.common.dao.BsCouponTypeDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="BsCouponType" id="responseMap">
+		<result property="id" column="id" />
+		<result property="coupon_name" column="coupon_name" />
+		<result property="type" column="type" />
+		<result property="coupon_limit" column="coupon_limit" />
+		<result property="discount" column="discount" />
+		<result property="start_time" column="start_time" />
+		<result property="end_time" column="end_time" />
+		<result property="num" column="num" />
+		<result property="use_limit" column="use_limit" />
+		<result property="scope" column="scope" />
+		<result property="gift_condition" column="gift_condition" />
+		<result property="status" column="status" />
+		<result property="gmt_create" column="gmt_create" />
+		<result property="gmt_modify" column="gmt_modify" />
+		<result property="gmt_user" column="gmt_user" />
+		<result property="modify_user" column="modify_user" />
+		<result property="vision" column="vision" />
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM bs_coupon_type
+		<where>
+			<!--添加查询 -->
+			<if test="type!=null">
+				and type=#{type}
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+
+			<if test="start_time!=null">
+				and  <![CDATA[ date_format( start_time,'%Y-%m-%d %T')>=date_format(#{start_time},'%Y-%m-%d %T')  ]]>
+			</if>
+			<if test="end_time!=null">
+				and  <![CDATA[ date_format( end_time,'%Y-%m-%d %T')<=date_format(#{end_time},'%Y-%m-%d %T')  ]]>
+			</if>
+		</where>
+		LIMIT
+		<if test="PSIZE==null">10</if>
+		<if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if>
+		<if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM bs_coupon_type
+		<where>
+			<!--添加查询 -->
+			<if test="type!=null">
+				and type=#{type}
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+
+			<if test="start_time!=null">
+				and  <![CDATA[ date_format( start_time,'%Y-%m-%d %T')>=date_format(#{start_time},'%Y-%m-%d %T')  ]]>
+			</if>
+			<if test="end_time!=null">
+				and  <![CDATA[ date_format( end_time,'%Y-%m-%d %T')<=date_format(#{end_time},'%Y-%m-%d %T')  ]]>
+			</if>
+		</where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="BsCouponType" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into
+		bs_coupon_type(coupon_name,type,coupon_limit,discount,start_time,end_time,num,use_limit,scope,gift_condition,status,gmt_create,gmt_user,vision)
+		values(#{coupon_name},#{type},#{coupon_limit},#{discount},#{start_time},#{end_time},#{num},#{use_limit},#{scope},#{gift_condition},#{status},now(),#{gmt_user},#{vision})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT *
+		FROM bs_coupon_type WHERE
+		id=#{id}
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="BsCouponType">
+		update bs_coupon_type
+		<set>
+			<if test="coupon_name!=null">
+				coupon_name=#{coupon_name},
+			</if>
+			<if test="type!=null">
+				type=#{type},
+			</if>
+			<if test="coupon_limit!=null">
+				coupon_limit=#{coupon_limit},
+			</if>
+			<if test="discount!=null">
+				discount=#{discount},
+			</if>
+			<if test="start_time!=null">
+				start_time=#{start_time},
+			</if>
+			<if test="end_time!=null">
+				end_time=#{end_time},
+			</if>
+			<if test="num!=null">
+				num=#{num},
+			</if>
+			<if test="use_limit!=null">
+				use_limit=#{use_limit},
+			</if>
+			<if test="scope!=null">
+				scope=#{scope},
+			</if>
+			<if test="gift_condition!=null">
+				gift_condition=#{gift_condition},
+			</if>
+			<if test="status!=null">
+				status=#{status},
+			</if>
+			<!-- <if test="gmt_create!=null"> gmt_create=#{gmt_create}, </if> -->
+			<!-- <if test="gmt_modify!=null"> gmt_modify=#{gmt_modify}, </if> -->
+			<!-- <if test="gmt_user!=null"> gmt_user=#{gmt_user}, </if> -->
+			<if test="modify_user!=null">
+				modify_user=#{modify_user},
+			</if>
+			<if test="vision!=null">
+				vision=#{vision},
+			</if>
+			gmt_modify =now()
+		</set>
+		where
+		id=#{id}
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from bs_coupon_type
+		where
+		id=#{id}
+	</delete>
+
+	<select id="selectCoupon" parameterType="java.util.Map"
+		resultMap="responseMap">
+		SELECT id,coupon_name FROM bs_coupon_type where status=1
+
+	</select>
+
+
+
+	<select id="selectActivityCouponPage" parameterType="java.util.Map" resultMap="responseMap">
+	
+		SELECT DISTINCT
+				ct.id,
+				ct.coupon_name,
+				ct.coupon_limit,
+				ct.start_time,
+				ct.end_time,
+				c.activity_id
+		FROM
+			bs_coupon_type ct
+		LEFT JOIN bs_coupon c ON ct.id = c.coupon_type_id where ct.status =1 and c.activity_id=#{activity_id} or c.activity_id is null
+		
+		LIMIT
+		<if test="PSIZE==null">10</if>
+		<if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if>
+		<if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectActivityCouponPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM (SELECT DISTINCT
+				ct.id,
+				ct.coupon_name,
+				ct.coupon_limit,
+				ct.start_time,
+				ct.end_time,
+				c.activity_id
+		FROM
+			bs_coupon_type ct
+		LEFT JOIN bs_coupon c ON ct.id = c.coupon_type_id where ct.status =1 and c.activity_id=#{activity_id} or c.activity_id is null )a
+	</select>
+</mapper>

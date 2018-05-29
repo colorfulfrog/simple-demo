@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excels>
+	<!-- 经纪人导出 -->
+	<excel id="AgentExport" class="com.yxcoach.common.entity.BsMember"
+		sheetname="经纪人导出" defaultColumnWidth="5000" enableStyle="true">
+		<!-- <field name="id" title="id"/> -->
+		<field name="nickname" title="用户名" />
+		<field name="real_name" title="真实姓名" />
+		<field name="pin" title="身份证号"
+			cellValueConverter="com.yxcoach.common.service.excel.BsMemberPinConverter" />
+		<field name="status" title="审核状态"
+			cellValueConverter="com.yxcoach.common.service.excel.BsMemberStatusConverter" />
+		<field name="identify_date" title="认证时间" pattern="yyyy-MM-dd HH:mm:SS" />
+		<field name="user_name" title="审核人" />
+	</excel>
+</excels>

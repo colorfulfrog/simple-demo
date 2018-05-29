@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxcoach.common.dao.SysPriceDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="SysPrice" id="responseMap">
+		<result property="id" column="id" />
+		<result property="car_type" column="car_type" />
+		<result property="car_year" column="car_year" />
+		<result property="car_category" column="car_category" />
+		<result property="seat_num" column="seat_num" />
+		<result property="weight" column="weight" />
+		<result property="is_need_appraise" column="is_need_appraise" />
+		<result property="check_price" column="check_price" />
+		<result property="level_price" column="level_price" />
+		<result property="all_round_price" column="all_round_price" />
+		<result property="gmt_create" column="gmt_create" />
+		<result property="gmt_modify" column="gmt_modify" />
+		<result property="gmt_user" column="gmt_user" />
+		<result property="update_user" column="update_user" />
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT
+		id,car_type,car_year,car_category,seat_num,weight,is_need_appraise,
+		is_operate_car,check_price, level_price, all_round_price, gmt_create,
+		gmt_modify, gmt_user, update_user FROM sys_price
+		<where>
+			<!--添加查询 -->
+			<if test="car_year!=null">
+				and car_year=#{car_year}
+			</if>
+			<if test="seat_num!=null">
+				and seat_num=#{seat_num}
+			</if>
+			<if test="weight!=null">
+				and weight=#{weight}
+			</if>
+			<if test="is_operate_car!=null">
+				and is_operate_car=#{is_operate_car}
+			</if>
+			<if test="is_need_appraise!=null">
+				and is_need_appraise=#{is_need_appraise}
+			</if>
+		</where>
+		LIMIT
+		<if test="PSIZE==null">10</if>
+		<if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if>
+		<if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM sys_price
+		<where>
+			<!--添加查询 -->
+			<if test="car_year!=null">
+				and car_year=#{car_year}
+			</if>
+			<if test="seat_num!=null">
+				and seat_num=#{seat_num}
+			</if>
+			<if test="weight!=null">
+				and weight=#{weight}
+			</if>
+			<if test="is_operate_car!=null">
+				and is_operate_car=#{is_operate_car}
+			</if>
+			<if test="is_need_appraise!=null">
+				and is_need_appraise=#{is_need_appraise}
+			</if>
+		</where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="SysPrice" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into
+		sys_price(car_type,car_year,car_category,seat_num,weight,is_need_appraise,check_price,level_price,all_round_price,gmt_create,gmt_user,update_user)
+		values(#{car_type},#{car_year},#{car_category},#{seat_num},#{weight},#{is_need_appraise},#{check_price},#{level_price},#{all_round_price},now(),#{gmt_user},#{update_user})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT
+		id,car_type,car_year,car_category,seat_num,weight,is_need_appraise,
+		is_operate_car,check_price, level_price, all_round_price, gmt_create,
+		gmt_modify, gmt_user, update_user
+		FROM sys_price WHERE
+		id=#{id}
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="SysPrice">
+		update sys_price
+		<set>
+			<if test="car_type!=null">
+				car_type=#{car_type},
+			</if>
+			<if test="car_year!=null">
+				car_year=#{car_year},
+			</if>
+			<if test="car_category!=null">
+				car_category=#{car_category},
+			</if>
+			<if test="seat_num!=null">
+				seat_num=#{seat_num},
+			</if>
+			<if test="weight!=null">
+				weight=#{weight},
+			</if>
+			<if test="is_need_appraise!=null">
+				is_need_appraise=#{is_need_appraise},
+			</if>
+			<if test="check_price!=null">
+				check_price=#{check_price},
+			</if>
+			<if test="level_price!=null">
+				level_price=#{level_price},
+			</if>
+			<if test="all_round_price!=null">
+				all_round_price=#{all_round_price},
+			</if>
+			<!--<if test="gmt_create!=null"> gmt_create=#{gmt_create}, </if> -->
+			<!-- <if test="gmt_modify!=null"> gmt_modify=#{gmt_modify}, </if> -->
+			<!-- <if test="gmt_user!=null"> gmt_user=#{gmt_user}, </if> -->
+			<if test="update_user!=null">
+				update_user=#{update_user}
+			</if>
+			gmt_modify=now()
+		</set>
+		where
+		id=#{id}
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from sys_price
+		where
+		id=#{id}
+	</delete>
+	
+	<!-- 根据条件查询 -->
+	<select id="getByCon" parameterType="SysPrice" resultMap="responseMap">
+		SELECT *
+		FROM sys_price
+		<where>
+			<if test="car_type!=null">
+				car_type=#{car_type}
+			</if>
+			<if test="car_year!=null">
+				and car_year=#{car_year}
+			</if>
+			<if test="car_category!=null">
+				and car_category=#{car_category}
+			</if>
+			<if test="seat_num!=null">
+				and seat_num=#{seat_num}
+			</if>
+			<if test="weight!=null">
+				and weight=#{weight}
+			</if>
+			<if test="is_need_appraise!=null">
+				and is_need_appraise=#{is_need_appraise}
+			</if>
+		</where>
+	</select>
+</mapper>

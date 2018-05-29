@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yxcoach.common.dao.BsCheckStationFeedbackDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="BsCheckStationFeedback" id="responseMap">
+				<result property="id" column="id"/>
+				<result property="order_id" column="order_id"/>
+				<result property="station_id" column="station_id"/>
+				<result property="score" column="score"/>
+				<result property="feedback_label" column="feedback_label"/>
+				<result property="content" column="content"/>
+				<result property="return_visits" column="return_visits"/>
+				<result property="feedback_date" column="feedback_date"/>
+				<result property="member_id" column="member_id"/>
+				<result property="station_name" column="station_name"/>
+				<result property="service_type" column="service_type"/>
+				<result property="order_count" column="order_count"/>
+				<result property="nickname" column="nickname"/>
+				<result property="telephone" column="telephone"/>
+				<result property="order_no" column="order_no"/>
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		select * from (
+		SELECT 
+		    s.id,s.station_name, o.service_type, count(o.id) order_count, sum(f.score)/count(s.id) score
+		FROM
+		    bs_check_station s,
+		    bs_check_station_feedback f,
+		    bs_order o
+		WHERE
+		    s.id = f.station_id
+		        AND f.order_id = o.id
+		GROUP BY s.id,s.station_name , o.service_type) a 
+		 <where> 
+		 	<!--添加查询 -->
+		 	<if test="station_id!=null">
+				a.id=#{station_id}
+			</if>
+			<if test="score!=null">
+				and a.score=#{score}
+			</if>
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		select count(1) from (
+		SELECT 
+		    s.id,s.station_name, o.service_type, count(o.id) order_count, sum(f.score)/count(s.id) score
+		FROM
+		    bs_check_station s,
+		    bs_check_station_feedback f,
+		    bs_order o
+		WHERE
+		    s.id = f.station_id
+		        AND f.order_id = o.id
+		GROUP BY s.id,s.station_name , o.service_type) a
+		<where> 
+		 	<!--添加查询 -->
+		 	<if test="station_id!=null">
+				a.id=#{station_id}
+			</if>
+			<if test="score!=null">
+				and a.score=#{score}
+			</if>
+		 </where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="BsCheckStationFeedback" useGeneratedKeys="true" keyProperty="id">
+		insert into bs_check_station_feedback(order_id,station_id,score,feedback_label,content,return_visits,feedback_date,member_id) values(#{order_id},#{station_id},#{score},#{feedback_label},#{content},#{return_visits},now(),#{member_id})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT * FROM bs_check_station_feedback WHERE 
+		id=#{id} 
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="BsCheckStationFeedback">
+		update bs_check_station_feedback
+		<set>
+				<if test="order_id!=null">
+					order_id=#{order_id},
+				</if>
+				<if test="station_id!=null">
+					station_id=#{station_id},
+				</if>
+				<if test="score!=null">
+					score=#{score},
+				</if>
+				<if test="feedback_label!=null">
+					feedback_label=#{feedback_label},
+				</if>
+				<if test="content!=null">
+					content=#{content},
+				</if>
+				<if test="return_visits!=null">
+					return_visits=#{return_visits},
+				</if>
+				<if test="feedback_date!=null">
+					feedback_date=#{feedback_date},
+				</if>
+				<if test="member_id!=null">
+					member_id=#{member_id}
+				</if>
+		</set>
+		where  
+		id=#{id} 
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from bs_check_station_feedback where 
+		id=#{id} 
+	</delete>
+	
+	<!-- 统计检测站评价标签 -->
+	<select id="statisticStationFeedbackLabel" parameterType="BsCheckStationFeedback" resultMap="responseMap">
+		select * from(
+		SELECT 
+		    s.id,s.station_name,o.service_type,f.feedback_label,count(f.feedback_label) order_count
+		FROM
+		    bs_check_station s,
+		    bs_check_station_feedback f,
+		    bs_order o
+		WHERE
+		    s.id = f.station_id
+		        AND f.order_id = o.id
+		GROUP BY s.id,s.station_name , o.service_type, f.feedback_label) a where a.id=#{id} and a.service_type=#{service_type} 
+	</select>
+	
+	<!-- 获取评价详情分页数据 -->
+	<select id="selectFeedBackDetailPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT 
+		   f.id,m.nickname,o.telephone,o.service_type,o.order_no,f.feedback_date,f.score,f.feedback_label,f.content,f.return_visits
+		FROM
+		    bs_check_station s,
+		    bs_check_station_feedback f,
+		    bs_order o,
+		    bs_member m
+		 <where> 
+		 	s.id = f.station_id AND f.order_id = o.id and o.member_id=m.id
+		 	<!--添加查询 -->
+		 	<if test="order_no!=null">
+				and o.order_no like concat('%',#{order_no},'%')
+			</if>
+			<if test="score!=null">
+				and f.score=#{score}
+			</if>
+			<if test="beginTime !=null and beginTime !='' ">
+		         <![CDATA[ and f.feedback_date  >=  #{beginTime}  ]]>
+		    </if>
+		    <if test="endTime !=null and endTime!='' "  >
+		         <![CDATA[ and f.feedback_date <=  #{endTime}  ]]>
+		    </if>
+		 </where>
+		 order by f.feedback_date desc
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取评价详情分页数据总条数 -->
+	<select id="selectFeedBackDetailPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT 
+		   count(1)
+		FROM
+		    bs_check_station s,
+		    bs_check_station_feedback f,
+		    bs_order o,
+		    bs_member m
+		<where> 
+			s.id = f.station_id AND f.order_id = o.id and o.member_id=m.id
+		 	<!--添加查询 -->
+		 	<if test="order_no!=null">
+				and o.order_no like concat('%',#{order_no},'%')
+			</if>
+			<if test="score!=null">
+				and f.score=#{score}
+			</if>
+			<if test="beginTime !=null and beginTime !='' ">
+		         <![CDATA[ and f.feedback_date  >=  #{beginTime}  ]]>
+		    </if>
+		    <if test="endTime !=null and endTime!='' "  >
+		         <![CDATA[ and f.feedback_date <=  #{endTime}  ]]>
+		    </if>
+		 </where>
+	</select>
+</mapper>

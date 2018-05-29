@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxcoach.common.dao.SysMsgSendTaskDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="SysMsgSendTask" id="responseMap">
+		<result property="id" column="id" />
+		<result property="type" column="type" />
+		<result property="content" column="content" />
+		<result property="status" column="status" />
+		<result property="days" column="days" />
+		<result property="gmt_create" column="gmt_create" />
+		<result property="gmt_modify" column="gmt_modify" />
+		<result property="gmt_user" column="gmt_user" />
+		<result property="update_user" column="update_user" />
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM sys_msg_send_task
+		<where>
+			<!--添加查询 -->
+			<if test="content!=null">
+				and content like CONCAT(#{content}, '%')
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			<if test="start_time!=null">
+				and  <![CDATA[ date_format( gmt_create,'%Y-%m-%d %T')>=date_format(#{start_time},'%Y-%m-%d %T')  ]]>
+			</if>
+			<if test="end_time!=null">
+				and  <![CDATA[ date_format( gmt_create,'%Y-%m-%d %T')<=date_format(#{end_time},'%Y-%m-%d %T')  ]]>
+			</if>
+		</where>
+		LIMIT
+		<if test="PSIZE==null">10</if>
+		<if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if>
+		<if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM sys_msg_send_task
+		<where>
+			<!--添加查询 -->
+			<if test="content!=null">
+				and content like CONCAT(#{content}, '%')
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			<if test="start_time!=null">
+				and  <![CDATA[ date_format( gmt_create,'%Y-%m-%d %T')>=date_format(#{start_time},'%Y-%m-%d %T')  ]]>
+			</if>
+			<if test="end_time!=null">
+				and  <![CDATA[ date_format( gmt_create,'%Y-%m-%d %T')<=date_format(#{end_time},'%Y-%m-%d %T')  ]]>
+			</if>
+		</where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="SysMsgSendTask"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into
+		sys_msg_send_task(type,content,status,days,gmt_create,gmt_user)
+		values(#{type},#{content},#{status},#{days},now(),#{gmt_user})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT *
+		FROM sys_msg_send_task WHERE
+		id=#{id}
+	</select>
+
+	<!-- 启动/停用 -->
+	<update id="updatEenableOrDisable" parameterType="SysMsgSendTask">
+		update
+		sys_msg_send_task set status=#{status},gmt_modify =now() where
+		id=#{id}
+	</update>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="SysMsgSendTask">
+		update sys_msg_send_task
+		<set>
+			<if test="type!=null">
+				type=#{type},
+			</if>
+			<if test="content!=null">
+				content=#{content},
+			</if>
+			<if test="status!=null">
+				status=#{status},
+			</if>
+			<if test="days!=null">
+				days=#{days},
+			</if>
+			<!-- <if test="gmt_create!=null"> gmt_create=#{gmt_create}, </if> -->
+			<!-- <if test="gmt_modify!=null"> gmt_modify=#{gmt_modify}, </if> -->
+			<!-- <if test="gmt_user!=null"> gmt_user=#{gmt_user}, </if> -->
+			<if test="update_user!=null">
+				update_user=#{update_user},
+			</if>
+			gmt_modify =now()
+		</set>
+		where
+		id=#{id}
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from
+		sys_msg_send_task where
+		id=#{id}
+	</delete>
+
+	<select id="selectByEnableData" resultMap="responseMap">
+		SELECT
+		type,content,status,days FROM sys_msg_send_task where status =1
+	</select>
+</mapper>

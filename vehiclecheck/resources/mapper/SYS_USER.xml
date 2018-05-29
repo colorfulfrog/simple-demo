@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yxcoach.common.dao.SysUserDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="SysUser" id="responseMap">
+				<result property="id" column="id"/>
+				<result property="login_name" column="login_name"/>
+				<result property="user_name" column="user_name"/>
+				<result property="user_pwd" column="user_pwd"/>
+				<result property="user_type" column="user_type"/>
+				<result property="telphone" column="telphone"/>
+				<result property="ismanager" column="ismanager"/>
+				<result property="use_status" column="use_status"/>
+				<result property="remark" column="remark"/>
+				<result property="cid" column="cid"/>
+				<result property="check_station_id" column="check_station_id"/>
+				<result property="check_station_name" column="check_station_name"/>
+				<result property="gmt_create" column="gmt_create"/>
+				<result property="gmt_modify" column="gmt_modify"/>
+				<result property="gmt_user" column="gmt_user"/>
+				<result property="modify_user" column="modify_user"/>
+				<result property="vision" column="vision"/>
+				<result property="device_token" column="device_token"/>
+				<result property="image" column="image"/>
+				<result property="nickname" column="nickname"/>
+	</resultMap>
+	
+	<resultMap type="com.yxcoach.common.response.SysUserInfoResp" id="InfoResp">
+		<result property="id" column="id"/>
+		<result property="user_name" column="user_name"/>
+		<result property="telphone" column="telphone"/>
+		<result property="image" column="image"/>
+		<result property="nickname" column="nickname"/>
+		<result property="friendNum" column="friendNum"/>
+		<result property="applyNum" column="applyNum"/>
+		<result property="newFriendNum" column="newFriendNum"/>
+		<result property="user_address" column="user_address"/>
+	</resultMap>
+	
+	<resultMap type="com.yxcoach.common.response.SysUserImgPhoneResp" id="SysUserImgPhoneResp">
+		<result property="id" column="id"/>
+		<result property="uid" column="uid"/>
+		<result property="telphone" column="telphone"/>
+		<result property="image" column="image"/>
+	</resultMap>
+	
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT a.*,c.id AS rid,s.station_name as check_station_name FROM sys_user a,sys_union b, sys_role c,bs_check_station s
+		 <where> 
+		a.id=b.oid AND TYPE=4 AND b.rid=c.id and a.check_station_id=s.id 
+		 	<if test="rid!=null">
+				AND c.id=#{rid}
+			</if>
+			<if test="userName!=null">
+				and a.user_name like '%${userName}%'
+			</if>
+			<if test="usestatus!=null">
+			and a.use_status=#{usestatus}
+			</if>
+			<if test="telphone!=null">
+			and a.telphone like '%${telphone}%'
+			</if>
+			<if test="check_station_id!=null">
+			and a.check_station_id =#{check_station_id}
+			</if>
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT count(1) FROM sys_user a,sys_union b, sys_role c,bs_check_station s 
+		<where> 
+		a.id=b.oid AND TYPE=4 AND b.rid=c.id and a.check_station_id=s.id 
+		 	<if test="rid!=null">
+				AND c.id=#{rid}
+			</if>
+			<if test="userName!=null">
+				and a.user_name like '%${userName}%'
+			</if>
+			<if test="usestatus!=null">
+			and a.use_status=#{usestatus}
+			</if>
+			<if test="selectNameTelphone!=null">
+			and (a.login_name like '%${selectNameTelphone}%' or a.telphone like '%${selectNameTelphone}%')
+			</if>
+		 </where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="SysUser" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_user(login_name,user_name,user_pwd,user_type,telphone,ismanager,use_status,remark,cid,check_station_id,gmt_create,gmt_modify,gmt_user,modify_user,vision,device_token,image,nickname) values(#{login_name},#{user_name},#{user_pwd},#{user_type},#{telphone},#{ismanager},#{use_status},#{remark},#{cid},#{check_station_id},now(),#{gmt_modify},#{gmt_user},#{modify_user},0,#{device_token},#{image},#{nickname})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT * FROM sys_user WHERE 
+		id=#{id} 
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="SysUser">
+		update sys_user
+		<set>
+				<if test="login_name!=null">
+					login_name=#{login_name},
+				</if>
+				<if test="user_name!=null">
+					user_name=#{user_name},
+				</if>
+				<if test="user_pwd!=null">
+					user_pwd=#{user_pwd},
+				</if>
+				<if test="user_type!=null">
+					user_type=#{user_type},
+				</if>
+				<if test="telphone!=null">
+					telphone=#{telphone},
+				</if>
+				<if test="ismanager!=null">
+					ismanager=#{ismanager},
+				</if>
+				<if test="use_status!=null">
+					use_status=#{use_status},
+				</if>
+				<if test="remark!=null">
+					remark=#{remark},
+				</if>
+				<if test="cid!=null">
+					cid=#{cid},
+				</if>
+				<if test="check_station_id!=null">
+					check_station_id=#{check_station_id},
+				</if>
+				<if test="gmt_create!=null">
+					gmt_create=#{gmt_create},
+				</if>
+				<if test="gmt_user!=null">
+					gmt_user=#{gmt_user},
+				</if>
+				<if test="modify_user!=null">
+					modify_user=#{modify_user},
+				</if>
+				<if test="vision!=null">
+					vision=#{vision},
+				</if>
+				<if test="device_token!=null">
+					device_token=#{device_token},
+				</if>
+				<if test="image!=null">
+					image=#{image},
+				</if>
+				<if test="nickname!=null">
+					nickname=#{nickname},
+				</if>
+				gmt_modify=now()
+		</set>
+		where  
+		id=#{id} 
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from sys_user where 
+		id=#{id} 
+	</delete>
+	
+	<!-- app登录-->
+	<select id="selectAll" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT a.*,b.rid rid,c.role_name FROM sys_user a ,
+		sys_union b,sys_role c WHERE a.id=b.oid AND b.rid=c.id
+		 AND b.type='4' AND b.rid IN(4,5) AND use_status=1 		
+		<if test="telphone!=null">
+			and a.telphone = #{telphone}
+		</if>
+		<if test="username!=null">
+			and a.login_name = #{username}
+		</if>
+	</select>
+	
+	<!-- 后台登录-->
+	<select id="selectAll1" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT a.*,b.rid rid,c.role_name FROM sys_user a ,
+		sys_union b,sys_role c WHERE a.id=b.oid AND b.rid=c.id
+		 AND b.type='4' AND b.rid IN(1,2,3) AND use_status=1 		
+		<if test="telphone!=null">
+			and a.telphone = #{telphone}
+		</if>
+		<if test="username!=null">
+			and a.login_name = #{username}
+		</if>
+	</select>
+	<!-- 重复验证 -->
+	<select id="checkExist" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT a.*,b.rid as rid 
+		FROM sys_user a 
+		LEFT JOIN sys_union b ON a.id=b.oid AND b.type='4' 
+		WHERE a.use_status=1 AND a.login_name=#{loginName}
+	</select>
+	
+	<select id="checkExist1" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT a.*,b.rid as rid 
+		FROM sys_user a 
+		LEFT JOIN sys_union b ON a.id=b.oid AND b.type='4' 
+		WHERE a.use_status=1 AND a.telphone=#{telphone}
+	</select>
+	
+	<!-- 获取用户信息和好友数量 -->
+	<select id="getInfo" parameterType="long" resultMap="InfoResp">
+		SELECT aa.*,bb.*,cc.*  FROM
+		  (SELECT COUNT(id) friendNum,pid AS pid1 FROM bs_user_friends WHERE pid = #{id} AND TYPE = 0)aa,
+		  (SELECT COUNT(id) applyNum,pid AS pid2 FROM bs_user_friends WHERE pid = #{id} AND TYPE = 1)bb,
+		  (SELECT COUNT(id) newFriendNum,pid AS pid3 FROM bs_user_friends WHERE  pid = #{id} AND TYPE = 2)cc
+	</select>
+	
+	<!-- 获取用户好友分页数据 -->
+	<select id="friendPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT a.* FROM sys_user a  WHERE a.id IN (SELECT uid FROM bs_user_friends WHERE pid =#{id} and type = 0) 
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取用户好友分页数据总条数 -->
+	<select id="friendPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT count(1) FROM sys_user a  WHERE a.id IN (SELECT uid FROM bs_user_friends WHERE pid =#{id} and type = 0)
+	</select>
+	
+	<!-- 根据类型查我的好友 type = 0 -->
+	<select id="getMyFriend" parameterType="long" resultMap="SysUserImgPhoneResp">
+		  SELECT a.*,s.telphone,s.image FROM (SELECT aa.*  FROM
+		  (SELECT id,uid  FROM bs_user_friends WHERE pid = #{id} AND TYPE = 0)aa	  
+		 )a
+		LEFT JOIN sys_user s ON a.uid = s.id
+	</select>
+	
+	<!-- 根据类型查我的申请 type = 1 -->
+	<select id="getMyApply" parameterType="long" resultMap="SysUserImgPhoneResp">
+		 SELECT a.*,s.telphone,s.image FROM (SELECT aa.*  FROM
+		  (SELECT id,uid  FROM bs_user_friends WHERE pid = #{id} AND TYPE = 1)aa	  
+		 )a
+		LEFT JOIN sys_user s ON a.uid = s.id
+	</select>
+	
+	<!-- 根据类型查我的新朋友 type = 2 -->
+	<select id="getMyNewFriend" parameterType="long" resultMap="SysUserImgPhoneResp">
+		 SELECT a.*,s.telphone,s.image FROM (SELECT aa.*  FROM
+		  (SELECT id,uid  FROM bs_user_friends WHERE pid = #{id} AND TYPE = 2)aa	  
+		 )a
+		LEFT JOIN sys_user s ON a.uid = s.id
+	</select>
+	
+	<!-- 手机号码查用户 -->
+	<select id="getUserByPhone" parameterType="String" resultMap="responseMap">
+		SELECT * FROM sys_user WHERE 
+		telphone=#{telphone} 
+	</select>
+	
+	<select id="selectExaminePerson"  parameterType="java.util.Map" resultMap="responseMap">
+		SELECT id, user_name FROM sys_user
+	</select>
+</mapper>

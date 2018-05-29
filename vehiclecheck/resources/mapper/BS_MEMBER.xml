@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxcoach.common.dao.BsMemberDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="BsMember" id="responseMap">
+		<result property="id" column="id" />
+		<result property="wechat_id" column="wechat_id" />
+		<result property="open_id" column="open_id" />
+		<result property="nickname" column="nickname" />
+		<result property="qrcode_url" column="qrcode_url" />
+		<result property="type" column="type" />
+		<result property="real_name" column="real_name" />
+		<result property="telphone" column="telphone" />
+		<result property="status" column="status" />
+		<result property="invite_num" column="invite_num" />
+		<result property="source" column="source" />
+		<result property="pin" column="pin" />
+		<result property="pin_front_url" column="pin_front_url" />
+		<result property="pin_back_url" column="pin_back_url" />
+		<result property="audit_user" column="audit_user" />
+		<result property="gmt_create" column="gmt_create" />
+		<result property="gmt_modify" column="gmt_modify" />
+		<result property="gmt_user" column="gmt_user" />
+		<result property="modify_user" column="modify_user" />
+		<result property="vision" column="vision" />
+		<result property="identify_date" column="identify_date" />
+		<result property="audit_desc" column="audit_desc" />
+
+		<result property="user_name" column="user_name" />
+	</resultMap>
+
+	<!-- 获取会员表联系电话数据 -->
+	<select id="selectByTelphone" parameterType="java.util.Map"
+		resultMap="responseMap">
+		SELECT telphone FROM bs_member where type =#{type}
+	</select>
+
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT b.*,u.user_name user_name,(select count(1)
+		from bs_invite_record where
+		inviter_wechat_id
+		=b.wechat_id) as invite_num FROM bs_member b left join sys_user u
+		on b.audit_user=u.id
+		<where>
+			<!--添加查询 -->
+			<if test="typex!=null">
+				and b.type=#{typex}
+			</if>
+			<if test="telphone!=null">
+				and b.telphone=#{telphone}
+			</if>
+			<if test="real_name!=null">
+				and b.real_name=#{real_name}
+			</if>
+			<if test="nickname!=null">
+				and b.nickname=#{nickname}
+			</if>
+			<if test="status!=null">
+				and b.status=#{status}
+			</if>
+			<if test="audit_user!=null">
+				and b.audit_user=#{audit_user}
+			</if>
+			<if test="source!=null">
+				and b.source=#{source}
+			</if>
+		</where>
+		LIMIT
+		<if test="PSIZE==null">10</if>
+		<if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if>
+		<if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM bs_member b left join sys_user u on
+		b.audit_user=u.id
+		<where>
+			<!--添加查询 -->
+			<if test="type!=null">
+				and b.type=#{type}
+			</if>
+			<if test="telphone!=null">
+				and b.telphone=#{telphone}
+			</if>
+			<if test="real_name!=null">
+				and b.real_name=#{real_name}
+			</if>
+			<if test="nickname!=null">
+				and b.nickname=#{nickname}
+			</if>
+			<if test="status!=null">
+				and b.status=#{status}
+			</if>
+			<if test="audit_user!=null">
+				and b.audit_user=#{audit_user}
+			</if>
+			<if test="source!=null">
+				and b.source=#{source}
+			</if>
+		</where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="BsMember" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into bs_member(
+		wechat_id,open_id,nickname,qrcode_url,type,real_name,telphone,status,invite_num,source,pin,pin_front_url,pin_back_url,
+		audit_user,gmt_create,gmt_user,vision,identify_date,audit_desc)
+		values(#{wechat_id},#{open_id},#{nickname},#{qrcode_url},#{type},#{real_name},#{telphone},#{status},#{invite_num},#{source},#{pin},#{pin_front_url},
+		#{pin_back_url},#{audit_user},#{gmt_create},#{gmt_user},#{vision},#{identify_date},#{audit_desc})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT *
+		FROM bs_member WHERE
+		id=#{id}
+	</select>
+
+
+	<!-- 经纪人审核 -->
+	<update id="updateExamine" parameterType="BsMember">
+		update bs_member
+		<set>
+			<if test="status!=null">
+				status=#{status},
+			</if>
+			<if test="audit_user!=null">
+				audit_user=#{audit_user},
+			</if>
+			<if test="audit_desc!=null">
+				audit_desc=#{audit_desc},
+			</if>
+			<if test="modify_user!=null">
+				modify_user=#{modify_user},
+			</if>
+			identify_date=now(),
+			gmt_modify =now()
+		</set>
+		where id=#{id}
+	</update>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="BsMember">
+		update bs_member
+		<set>
+			<if test="wechat_id!=null">
+				wechat_id=#{wechat_id},
+			</if>
+			<if test="open_id!=null">
+				open_id=#{open_id},
+			</if>
+			<if test="nickname!=null">
+				nickname=#{nickname},
+			</if>
+			<if test="qrcode_url!=null">
+				qrcode_url=#{qrcode_url},
+			</if>
+			<if test="type!=null">
+				type=#{type},
+			</if>
+			<if test="real_name!=null">
+				real_name=#{real_name},
+			</if>
+			<if test="telphone!=null">
+				telphone=#{telphone},
+			</if>
+			<if test="status!=null">
+				status=#{status},
+			</if>
+			<if test="invite_num!=null">
+				invite_num=#{invite_num},
+			</if>
+			<if test="source!=null">
+				source=#{source},
+			</if>
+			<if test="pin!=null">
+				pin=#{pin},
+			</if>
+			<if test="pin_front_url!=null">
+				pin_front_url=#{pin_front_url},
+			</if>
+			<if test="pin_back_url!=null">
+				pin_back_url=#{pin_back_url},
+			</if>
+			<!-- 认证时间 -->
+			<!--<if test="audit_user!=null"> audit_user=#{audit_user}, </if> -->
+			<!-- <if test="gmt_create!=null"> gmt_create=#{gmt_create}, </if> -->
+			<!-- <if test="gmt_modify!=null"> gmt_modify=#{gmt_modify}, </if> -->
+			<!--<if test="gmt_user!=null"> gmt_user=#{gmt_user}, </if> -->
+			<if test="modify_user!=null">
+				modify_user=#{modify_user},
+			</if>
+			<if test="vision!=null">
+				vision=#{vision},
+			</if>
+
+			<if test="identify_date!=null">
+				identify_date=#{identify_date},
+			</if>
+			<if test="audit_desc!=null">
+				audit_desc=#{audit_desc},
+			</if>
+			gmt_modify=now()
+		</set>
+		where
+		id=#{id}
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from bs_member
+		where
+		id=#{id}
+	</delete>
+
+	<!-- 根据条件查询会员 -->
+	<select id="getByCon" parameterType="BsMember" resultMap="responseMap">
+		SELECT * FROM bs_member
+		<where>
+			<if test="wechat_id!=null">
+				wechat_id=#{wechat_id}
+			</if>
+			<if test="open_id!=null">
+				and open_id=#{open_id}
+			</if>
+			<if test="telphone!=null">
+				and telphone=#{telphone}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectMeVip" parameterType="java.util.Map"
+		resultMap="responseMap">
+		select nickname,telphone,gmt_create from bs_member
+		where wechat_id in (
+		select invitee_wechat_id
+		from bs_invite_record where
+		inviter_wechat_id
+		=#{wechat_id})
+
+		LIMIT
+		<if test="PSIZE==null">10</if>
+		<if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if>
+		<if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+
+	<select id="selectMeVipCount" resultType="int" parameterType="java.util.Map">
+		select count(1) from bs_member
+		where wechat_id in (
+		select
+		invitee_wechat_id
+		from bs_invite_record where
+		inviter_wechat_id
+		=#{wechat_id})
+
+	</select>
+
+
+	<select id="getMembersByCon" parameterType="BsMember" resultMap="responseMap">
+		SELECT b.*,u.user_name user_name ,(select count(1)
+		from bs_invite_record where
+		inviter_wechat_id
+		=b.wechat_id) as invite_num  FROM bs_member b left join sys_user u
+		on b.audit_user=u.id
+		<where>
+			<!--添加查询 -->
+			<if test="typex!=null and typex!=''">
+				and b.type=#{typex}
+			</if>
+			<if test="telphone!=null and telphone!=''">
+				and b.telphone=#{telphone}
+			</if>
+			<if test="real_name!=null and real_name!=''">
+				and b.real_name=#{real_name}
+			</if>
+			<if test="nickname!=null and nickname!=''">
+				and b.nickname=#{nickname}
+			</if>
+			<if test="status!=null and status!=''">
+				and b.status=#{status}
+			</if>
+			<if test="audit_user!=null and audit_user!=''">
+				and b.audit_user=#{audit_user}
+			</if>
+			<if test="source!=null and source!=''">
+				and b.source=#{source}
+			</if>
+		</where>
+	</select>
+
+</mapper>

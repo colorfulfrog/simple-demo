@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxcoach.common.dao.SysConfigDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="SysConfig" id="responseMap">
+		<result property="id" column="id" />
+		<result property="broker_commission" column="broker_commission" />
+		<result property="car_owner_commission" column="car_owner_commission" />
+		<result property="refund_fee" column="refund_fee" />
+		<result property="withdraw_cash_fee" column="withdraw_cash_fee" />
+		<result property="payment_expire" column="payment_expire" />
+		<result property="gmt_create" column="gmt_create" />
+		<result property="gmt_modify" column="gmt_modify" />
+		<result property="gmt_user" column="gmt_user" />
+		<result property="update_user" column="update_user" />
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT id,broker_commission,
+		car_owner_commission,refund_fee,
+		withdraw_cash_fee,payment_expire,
+		gmt_create,gmt_modify,gmt_user,update_user
+		FROM sys_config
+		<where>
+			<!--添加查询 -->
+		</where>
+		LIMIT
+		<if test="PSIZE==null">10</if>
+		<if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if>
+		<if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM sys_config
+		<where>
+			<!--添加查询 -->
+		</where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="SysConfig" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into
+		sys_config(broker_commission,car_owner_commission,refund_fee,withdraw_cash_fee,payment_expire,gmt_create,gmt_user)
+		values(#{broker_commission},#{car_owner_commission},#{refund_fee},#{withdraw_cash_fee},#{payment_expire},now(),#{gmt_user})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT
+		id,broker_commission,
+		car_owner_commission,refund_fee,
+		withdraw_cash_fee,payment_expire,
+		gmt_create,gmt_modify,gmt_user,update_user
+		FROM sys_config WHERE
+		id=#{id}
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="SysConfig">
+		update sys_config
+		<set>
+			<if test="broker_commission!=null">
+				broker_commission=#{broker_commission},
+			</if>
+			<if test="car_owner_commission!=null">
+				car_owner_commission=#{car_owner_commission},
+			</if>
+			<if test="refund_fee!=null">
+				refund_fee=#{refund_fee},
+			</if>
+			<if test="withdraw_cash_fee!=null">
+				withdraw_cash_fee=#{withdraw_cash_fee},
+			</if>
+			<if test="payment_expire!=null">
+				payment_expire=#{payment_expire},
+			</if>
+			<!-- <if test="gmt_create!=null"> gmt_create=#{gmt_create}, </if> -->
+			<!-- <if test="gmt_modify!=null"> gmt_modify=#{gmt_modify}, </if> -->
+			<!-- <if test="gmt_user!=null"> gmt_user=#{gmt_user}, </if> -->
+			<if test="update_user!=null">
+				update_user=#{update_user},
+			</if>
+			gmt_modify =now()
+		</set>
+		where
+		id=#{id}
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from sys_config
+		where
+		id=#{id}
+	</delete>
+	
+	<select id="all" resultMap="responseMap">
+		select * from sys_config
+	</select>
+</mapper>

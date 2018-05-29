@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxcoach.common.dao.BsCouponDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="BsCoupon" id="responseMap">
+		<result property="id" column="id" />
+		<result property="coupon_type_id" column="coupon_type_id" />
+		<result property="coupon_code" column="coupon_code" />
+		<result property="activity_Id" column="activity_Id" />
+		<result property="member_id" column="member_id" />
+
+		<result property="nickname" column="nickname" />
+		<result property="telphone" column="telphone" />
+		<result property="order_no" column="order_no" />
+		<result property="receive_date" column="receive_date" />
+		<result property="status" column="status" />
+		<result property="use_date" column="use_date" />
+
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM bs_coupon
+		<where>
+			<!--添加查询 -->
+		</where>
+		LIMIT
+		<if test="PSIZE==null">10</if>
+		<if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if>
+		<if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM bs_coupon
+		<where>
+			<!--添加查询 -->
+		</where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="BsCoupon" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into
+		bs_coupon(coupon_type_id,coupon_code,activity_Id,member_id,status,receive_date,use_date)
+		values(#{coupon_type_id},#{coupon_code},#{activity_Id},#{member_id},#{status},#{receive_date},#{use_date})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT *
+		FROM bs_coupon WHERE
+		id=#{id}
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="BsCoupon">
+		update bs_coupon
+		<set>
+			<if test="coupon_type_id!=null">
+				coupon_type_id=#{coupon_type_id},
+			</if>
+			<if test="coupon_code!=null">
+				coupon_code=#{coupon_code},
+			</if>
+			<if test="activity_Id!=null">
+				activity_Id=#{activity_Id},
+			</if>
+			<if test="member_id!=null">
+				member_id=#{member_id},
+			</if>
+
+			<if test="status!=null">
+				status=#{status},
+			</if>
+			<if test="receive_date!=null">
+				receive_date=#{receive_date},
+			</if>
+			<if test="use_date!=null">
+				use_date=#{use_date}
+			</if>
+		</set>
+		where
+		id=#{id}
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from bs_coupon
+		where
+		id=#{id}
+	</delete>
+
+	<!-- 批量保存 -->
+	<insert id="addBatch" parameterType="BsCoupon" useGeneratedKeys="true">
+		insert into
+		bs_coupon(coupon_type_id,coupon_code,activity_Id,member_id,status)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			( #{item.coupon_type_id},
+			#{item.coupon_code},#{item.activity_Id},
+			#{item.member_id},#{item.status})
+		</foreach>
+	</insert>
+
+	<!-- 优惠券明细 -->
+	<select id="selectDetailedPage" parameterType="java.util.Map"
+		resultMap="responseMap">
+
+		SELECT
+		c.coupon_code coupon_code,
+		m.nickname nickname,
+		m.telphone
+		telphone,
+		o.order_no order_no,
+		c.receive_date receive_date,
+		c.`status`
+		status,
+		c.use_date use_date
+		FROM
+		bs_coupon c
+		LEFT JOIN bs_member m ON
+		c.member_id = m.id
+		LEFT JOIN bs_order o ON m.id = o.member_id
+		WHERE
+		coupon_type_id =
+		#{coupon_type_id}
+		<if test="telphone!=null">
+			and m.telphone =#{telphone}
+		</if>
+		<if test="coupon_code!=null">
+			and c.coupon_code=#{coupon_code}
+		</if>
+		<if test="status!=null">
+			and c.`status`=#{status}
+		</if>
+
+		LIMIT
+		<if test="PSIZE==null">10</if>
+		<if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if>
+		<if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页优惠券明细 数据总条数 -->
+	<select id="selectDetailedPageCount" resultType="int"
+		parameterType="java.util.Map">
+
+		SELECT count(1) FROM bs_coupon c LEFT JOIN bs_member m ON
+		c.member_id =
+		m.id
+		LEFT JOIN bs_order o ON m.id = o.member_id
+		WHERE
+		coupon_type_id =
+		#{coupon_type_id}
+		<if test="telphone!=null">
+			and m.telphone =#{telphone}
+		</if>
+		<if test="coupon_code!=null">
+			and c.coupon_code=#{coupon_code}
+		</if>
+		<if test="status!=null">
+			and c.`status`=#{status}
+		</if>
+	</select>
+
+	<!-- 查询当前Coupon_type_id 未领取的优惠券 -->
+	<select id="selectCouponStatusUnreceived" parameterType="java.util.Map"
+		resultMap="responseMap">
+		SELECT * FROM bs_coupon where coupon_type_id =
+		#{coupon_type_id} and status
+		=4
+	</select>
+
+	<!-- 更新一条优惠券状态为未使用 发给当前车主 -->
+	<update id="updateStatus" parameterType="BsCoupon">
+		update bs_coupon set
+		member_id=#{member_id},
+		<if test="receive_date!=null">
+			receive_date=now(),
+		</if>
+		<if test="use_date!=null">
+			use_date=now(),
+		</if>
+		status=#{member_id}
+		where
+		id=#{id}
+	</update>
+</mapper>

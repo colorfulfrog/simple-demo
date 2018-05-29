@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yxcoach.common.dao.BsCheckStationDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="BsCheckStation" id="responseMap">
+				<result property="id" column="id"/>
+				<result property="station_name" column="station_name"/>
+				<result property="longitude" column="longitude"/>
+				<result property="latitude" column="latitude"/>
+				<result property="station_address" column="station_address"/>
+				<result property="telephone" column="telephone"/>
+				<result property="isenable" column="isenable"/>
+				<result property="gmt_create" column="gmt_create"/>
+				<result property="gmt_user" column="gmt_user"/>
+				<result property="gmt_modify" column="gmt_modify"/>
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM bs_check_station 
+		 <where> 
+		 	<!--添加查询 -->
+		 	<if test="id!=null">
+				id like concat('%',#{id},'%')
+			</if>
+		 	<if test="station_name!=null">
+				and station_name like concat('%',#{station_name},'%')
+			</if>
+		 	<if test="isenable!=null">
+				and isenable = #{isenable}
+			</if>
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM bs_check_station
+		<where> 
+		 	<!--添加查询 -->
+		 	<if test="id!=null">
+				id like concat('%',#{id},'%')
+			</if>
+		 	<if test="station_name!=null">
+				and station_name like concat('%',#{station_name},'%')
+			</if>
+		 	<if test="isenable!=null">
+				and isenable = #{isenable}
+			</if>
+		 </where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="BsCheckStation" useGeneratedKeys="true" keyProperty="id">
+		insert into bs_check_station(station_name,longitude,latitude,station_address,telephone,isenable,gmt_create,gmt_user,gmt_modify) values(#{station_name},#{longitude},#{latitude},#{station_address},#{telephone},#{isenable},now(),#{gmt_user},now())
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT * FROM bs_check_station WHERE 
+		id=#{id} 
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="BsCheckStation">
+		update bs_check_station
+		<set>
+				<if test="station_name!=null">
+					station_name=#{station_name},
+				</if>
+				<if test="longitude!=null">
+					longitude=#{longitude},
+				</if>
+				<if test="latitude!=null">
+					latitude=#{latitude},
+				</if>
+				<if test="station_address!=null">
+					station_address=#{station_address},
+				</if>
+				<if test="telephone!=null">
+					telephone=#{telephone},
+				</if>
+				<if test="isenable!=null">
+					isenable=#{isenable},
+				</if>
+				<if test="gmt_create!=null">
+					gmt_create=#{gmt_create},
+				</if>
+				<if test="gmt_user!=null">
+					gmt_user=#{gmt_user},
+				</if>
+					gmt_modify=now()
+		</set>
+		where  
+		id=#{id} 
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from bs_check_station where 
+		id=#{id} 
+	</delete>
+	<!-- 获取所有检测站 -->
+	<select id="all" resultMap="responseMap">
+		SELECT * FROM bs_check_station
+	</select>
+</mapper>

@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yxcoach.common.dao.BsOrderDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="BsOrder" id="responseMap">
+				<result property="id" column="id"/>
+				<result property="station_id" column="station_id"/>
+				<result property="order_no" column="order_no"/>
+				<result property="car_id" column="car_id"/>
+				<result property="check_fee" column="check_fee"/>
+				<result property="level_fee" column="level_fee"/>
+				<result property="all_round_check_fee" column="all_round_check_fee"/>
+				<result property="discount_fee" column="discount_fee"/>
+				<result property="coupon_fee" column="coupon_fee"/>
+				<result property="total_fee" column="total_fee"/>
+				<result property="coupon_id" column="coupon_id"/>
+				<result property="member_id" column="member_id"/>
+				<result property="telephone" column="telephone"/>
+				<result property="service_type" column="service_type"/>
+				<result property="pay_type" column="pay_type"/>
+				<result property="pay_status" column="pay_status"/>
+				<result property="pay_date" column="pay_date"/>
+				<result property="out_pay_no" column="out_pay_no"/>
+				<result property="pay_seller_id" column="pay_seller_id"/>
+				<result property="pay_buyer_id" column="pay_buyer_id"/>
+				<result property="refund_fee" column="refund_fee"/>
+				<result property="refund_date" column="refund_date"/>
+				<result property="status" column="status"/>
+				<result property="order_date" column="order_date"/>
+				<result property="check_result_img" column="check_result_img"/>
+				<result property="refund_type" column="refund_type"/>
+				<result property="gmt_create" column="gmt_create"/>
+				<result property="gmt_modify" column="gmt_modify"/>
+				<result property="gmt_user" column="gmt_user"/>
+				<result property="update_user" column="update_user"/>
+				
+				<!-- 扩展属性 -->
+				<result property="nickname" column="nickname"/>
+				<result property="real_name" column="real_name"/>
+				<result property="user_name" column="user_name"/>
+	</resultMap>
+	
+	<!--  后台查询分页列表返回结果集 -->
+	<resultMap type="BsOrder" id="responseBackstageMap">
+				<result property="id" column="id"/>
+				<result property="station_id" column="station_id"/>
+				<result property="order_no" column="order_no"/>
+				<result property="car_id" column="car_id"/>
+				<result property="check_fee" column="check_fee"/>
+				<result property="level_fee" column="level_fee"/>
+				<result property="all_round_check_fee" column="all_round_check_fee"/>
+				<result property="discount_fee" column="discount_fee"/>
+				<result property="coupon_fee" column="coupon_fee"/>
+				<result property="total_fee" column="total_fee"/>
+				<result property="coupon_id" column="coupon_id"/>
+				<result property="member_id" column="member_id"/>
+				<result property="telephone" column="telephone"/>
+				<result property="service_type" column="service_type"/>
+				<result property="pay_type" column="pay_type"/>
+				<result property="pay_status" column="pay_status"/>
+				<result property="pay_date" column="pay_date"/>
+				<result property="out_pay_no" column="out_pay_no"/>
+				<result property="pay_seller_id" column="pay_seller_id"/>
+				<result property="pay_buyer_id" column="pay_buyer_id"/>
+				<result property="refund_fee" column="refund_fee"/>
+				<result property="refund_date" column="refund_date"/>
+				<result property="status" column="status"/>
+				<result property="order_date" column="order_date"/>
+				<result property="check_result_img" column="check_result_img"/>
+				<result property="refund_type" column="refund_type"/>
+				<result property="gmt_create" column="gmt_create"/>
+				<result property="gmt_modify" column="gmt_modify"/>
+				<result property="gmt_user" column="gmt_user"/>
+				<result property="update_user" column="update_user"/>
+				
+				<!-- 扩展属性 -->
+				<result property="nickname" column="nickname"/>
+				<result property="real_name" column="real_name"/>
+				<result property="user_name" column="user_name"/>
+				
+				<result property="car_number" column="car_number"/>
+				<result property="station_name" column="station_name"/>
+				
+	</resultMap>
+	
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM bs_order 
+		 <where> 
+		 	<!--添加查询 -->
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM bs_order
+		<where> 
+		 	<!--添加查询 -->
+		 </where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="BsOrder" useGeneratedKeys="true" keyProperty="id">
+		insert into bs_order(station_id,order_no,car_id,check_fee,level_fee,all_round_check_fee,discount_fee,coupon_fee,total_fee,coupon_id,member_id,telephone,service_type,pay_type,pay_status,pay_date,out_pay_no,pay_seller_id,pay_buyer_id,status,check_result_img,refund_type,gmt_create,gmt_modify,gmt_user,update_user) values(#{station_id},#{order_no},#{car_id},#{check_fee},#{level_fee},#{all_round_check_fee},#{discount_fee},#{coupon_fee},#{total_fee},#{coupon_id},#{member_id},#{telephone},#{service_type},#{pay_type},#{pay_status},#{pay_date},#{out_pay_no},#{pay_seller_id},#{pay_buyer_id},#{status},#{check_result_img},#{refund_type},now(),now(),#{gmt_user},#{update_user})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT O.* FROM bs_order  o,WHERE 
+		id=#{id} 
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="BsOrder">
+		update bs_order
+		<set>
+				<if test="car_id!=null">
+					car_id=#{car_id},
+				</if>
+				<if test="check_fee!=null">
+					check_fee=#{check_fee},
+				</if>
+				<if test="level_fee!=null">
+					level_fee=#{level_fee},
+				</if>
+				<if test="all_round_check_fee!=null">
+					all_round_check_fee=#{all_round_check_fee},
+				</if>
+				<if test="discount_fee!=null">
+					discount_fee=#{discount_fee},
+				</if>
+				<if test="coupon_fee!=null">
+					coupon_fee=#{coupon_fee},
+				</if>
+				<if test="total_fee!=null">
+					total_fee=#{total_fee},
+				</if>
+				<if test="coupon_id!=null">
+					coupon_id=#{coupon_id},
+				</if>
+				<if test="member_id!=null">
+					member_id=#{member_id},
+				</if>
+				<if test="telephone!=null">
+					telephone=#{telephone},
+				</if>
+				<if test="service_type!=null">
+					service_type=#{service_type},
+				</if>
+				<if test="pay_type!=null">
+					pay_type=#{pay_type},
+				</if>
+				<if test="pay_status!=null">
+					pay_status=#{pay_status},
+				</if>
+				<if test="pay_date!=null">
+					pay_date=#{pay_date},
+				</if>
+				<if test="out_pay_no!=null">
+					out_pay_no=#{out_pay_no},
+				</if>
+				<if test="pay_seller_id!=null">
+					pay_seller_id=#{pay_seller_id},
+				</if>
+				<if test="pay_buyer_id!=null">
+					pay_buyer_id=#{pay_buyer_id},
+				</if>
+				<if test="status!=null">
+					status=#{status},
+				</if>
+				<if test="order_date!=null">
+					order_date=#{order_date},
+				</if>
+				<if test="check_result_img!=null">
+					check_result_img=#{check_result_img},
+				</if>
+				<if test="refund_type!=null">
+					refund_type=#{refund_type},
+				</if>
+				<if test="refund_fee!=null">
+					refund_fee=#{refund_fee},
+				</if>
+				<if test="refund_date!=null">
+					refund_date=#{refund_date},
+				</if>
+				<if test="gmt_create!=null">
+					gmt_create=#{gmt_create},
+				</if>
+				<if test="gmt_modify!=null">
+					gmt_modify=#{gmt_modify},
+				</if>
+				<if test="gmt_user!=null">
+					gmt_user=#{gmt_user},
+				</if>
+				<if test="update_user!=null">
+					update_user=#{update_user}
+				</if>
+		</set>
+		where  
+		id=#{id} 
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from bs_order where 
+		id=#{id} 
+	</delete>
+	
+	
+	<!-- 财务流水 列表   获取分页数据 -->
+	<select id="selectflowPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT bo.*,m.nickname,m.real_name FROM bs_order bo
+		join bs_member m on bo.member_id=m.id 
+		 <where> 
+			<if test="order_no!=null">
+				AND bo.`order_no`=#{order_no}
+			</if>
+			<if test="startDate!=null">
+				AND bo.`pay_date` &gt;=STR_TO_DATE(concat(#{startDate},' 00:00:00'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			
+			<if test="endDate!=null">
+				AND bo.`pay_date` &lt;=STR_TO_DATE(concat(#{endDate},' 23:59:59'),'%Y-%m-%d %H:%i:%s')  
+			</if>
+			
+			<!-- 全部       0   [2待检测 3检测中  4已完成  5退款待审核 6待退款（退款审核通过） 7退款审核不通过 8已退款] -->
+			<if test="query_status==null or query_status==0">
+				AND instr('2,3,4,5,6,7,8',bo.status)>0
+			</if>
+			<!-- 已支付   1   [2待检测 3检测中  4已完成  5退款待审核 7退款审核不通过] -->
+			<if test="query_status!=null and query_status==1">
+				AND instr('2,3,4,5,7',bo.status)>0
+			</if>
+			<!-- 退款中   2   [6待退款（退款审核通过）] -->
+			<if test="query_status!=null and query_status==2">
+				AND bo.status=6
+			</if>
+			<!-- 已退款   3   [8已退款] -->
+			<if test="query_status!=null and query_status==3">
+				AND bo.status=8
+			</if>
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!--  财务流水 列表  获取分页数据总条数 -->
+	<select id="selectflowPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM bs_order bo
+		<where> 
+		 	<if test="order_no!=null">
+				AND bo.`order_no`=#{order_no}
+			</if>
+			<if test="startDate!=null">
+				AND bo.`pay_date` &gt;=STR_TO_DATE(concat(#{startDate},' 00:00:00'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			
+			<if test="endDate!=null">
+				AND bo.`pay_date` &lt;=STR_TO_DATE(concat(#{endDate},' 23:59:59'),'%Y-%m-%d %H:%i:%s')  
+			</if>
+			
+			<!-- 全部       0   [2待检测 3检测中  4已完成  5退款待审核 6待退款（退款审核通过） 7退款审核不通过 8已退款] -->
+			<if test="query_status==null or query_status==0">
+				AND instr('2,3,4,5,6,7,8',bo.status)>0
+			</if>
+			<!-- 已支付   1   [2待检测 3检测中  4已完成  5退款待审核 7退款审核不通过] -->
+			<if test="query_status!=null and query_status==1">
+				AND instr('2,3,4,5,7',bo.status)>0
+			</if>
+			<!-- 退款中   2   [6待退款（退款审核通过）] -->
+			<if test="query_status!=null and query_status==2">
+				AND bo.status=6
+			</if>
+			<!-- 已退款   3   [8已退款] -->
+			<if test="query_status!=null and query_status==3">
+				AND bo.status=8
+			</if>
+		 </where>
+	</select>
+	
+	
+	
+	<!-- 退款单 列表   获取分页数据 -->
+	<select id="selectRefundPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT bo.*,u.user_name FROM bs_order bo
+		 left join sys_user u on bo.update_user=u.id
+		 <where> 
+		 
+			<if test="order_no!=null">
+				AND bo.`order_no`=#{order_no}
+			</if>
+			
+			<if test="startDate!=null">
+				AND bo.`refund_date` &gt;=STR_TO_DATE(concat(#{startDate},' 00:00:00'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			
+			<if test="endDate!=null">
+				AND bo.`refund_date` &lt;=STR_TO_DATE(concat(#{endDate},' 23:59:59'),'%Y-%m-%d %H:%i:%s')  
+			</if>
+			
+			<choose>
+			<!--  全部  -->  
+             <when test="refund_status == 0 or refund_status == null "> AND instr('5,6,7,8',bo.status)>0 </when>  
+             <!-- 5 退款待审核 -->
+             <when test="refund_status == 1"> AND bo.status=5</when>  
+             <!-- 7 退款审核不通过 -->
+             <when test="refund_status == 2"> AND bo.status=7</when>  
+             <!-- 6 待退款（退款审核通过） -->
+             <when test="refund_status == 3"> AND bo.status=6</when>  
+             <!-- 8 已退款 -->
+             <when test="refund_status == 4"> AND bo.status=8</when>  
+          	</choose> 
+          	<!-- 退款途径  -->
+          	<if test="refund_type!=null">
+				AND bo.refund_type=#{refund_type}
+			</if> 
+          	<!-- 更新人 -->
+          	<if test="gmt_user!=null">
+				AND u.user_name=#{gmt_user}
+			</if>
+			
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	
+	<!--  退款单 列表  获取分页数据总条数 -->
+	<select id="selectRefundPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM bs_order bo
+		
+		<where> 
+		 	<if test="order_no!=null">
+				AND bo.`order_no`=#{order_no}
+			</if>
+			
+			<if test="startDate!=null">
+				AND bo.`refund_date` &gt;=STR_TO_DATE(concat(#{startDate},' 00:00:00'),'%Y-%m-%d %H:%i:%s')
+			</if>
+			
+			<if test="endDate!=null">
+				AND bo.`refund_date` &lt;=STR_TO_DATE(concat(#{endDate},' 23:59:59'),'%Y-%m-%d %H:%i:%s')  
+			</if>
+			
+			<choose>
+			 <!--  全部  -->  
+             <when test="refund_status == 0 or refund_status == null "> AND instr('5,6,7,8',bo.status)>0 </when>  
+             <!-- 5 退款待审核 -->
+             <when test="refund_status == 1"> AND bo.status=5</when>  
+             <!-- 7 退款审核不通过 -->
+             <when test="refund_status == 2"> AND bo.status=7</when>  
+             <!-- 6 待退款（退款审核通过） -->
+             <when test="refund_status == 3"> AND bo.status=6</when>  
+             <!-- 8 已退款 -->
+             <when test="refund_status == 4"> AND bo.status=8</when>  
+          	</choose>
+          	<!-- 退款途径  -->
+          	<if test="refund_type!=null">
+				AND bo.refund_type=#{refund_type}
+			</if>
+          	<!-- 更新人 -->
+          	<if test="gmt_user!=null">
+				AND u.user_name=#{gmt_user}
+			</if>
+			
+		 </where>
+	</select>
+	
+
+	<!-- 获取后台分页数据 -->
+	<select id="selectBackstagePage" parameterType="java.util.Map" resultMap="responseBackstageMap">
+			SELECT
+					o.*, (
+						SELECT
+							nickname
+						FROM
+							bs_member b
+						WHERE
+							o.member_id = b.id
+					) AS nickname,
+					(
+						SELECT
+							car_number
+						FROM
+							bs_car b
+						WHERE
+							o.car_id = b.id
+					) AS car_number,
+					cs.station_name
+				FROM
+					bs_order o
+				LEFT JOIN bs_check_station cs ON o.station_id = cs.id
+				 <where> 
+				 <!--添加查询 -->
+				 	<if test="order_no!=null">
+						o.order_no = #{order_no}
+					</if>
+					<if test="telephone!=null">
+						AND o.telephone = #{telephone}
+					</if>
+					 <!-- 车牌号 --> 
+					 <if test="car_number!=null">
+						and exists(SELECT
+									car_number
+								FROM
+									bs_car b
+								WHERE
+									o.car_id = b.id and car_number=#{car_number} )
+					</if>
+					 <!--  预约时间 -->
+					 <if test="order_start_date!=null">
+					and   <![CDATA[  date_format( o.order_date,'%Y-%m-%d %T')>=date_format(#{order_start_date},'%Y-%m-%d %T')    ]]>
+					</if>
+					<if test="order_end_date!=null">
+						and  <![CDATA[  date_format( o.order_date,'%Y-%m-%d %T')<=date_format(#{order_end_date},'%Y-%m-%d %T')  ]]>
+					</if>
+					 <!-- 监测站 -->
+					 <if test="station_id!=null">
+					and o.station_id =#{station_id}
+					</if>
+					<if test="station_name!=null">
+						and cs.station_name =#{station_name}
+					</if>
+					<if test="status!=null">
+					 <!-- 订单状态 -->
+						and o.`status` =#{status}
+					</if>
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取后台分页数据总条数 -->
+	<select id="selectBackstagePageCount" resultType="int" parameterType="java.util.Map">
+			SELECT
+					count(1)
+				FROM
+					bs_order o
+				LEFT JOIN bs_check_station cs ON o.station_id = cs.id
+				 <where> 
+				 	<!--添加查询 -->
+				 	<if test="order_no!=null">
+						and	o.order_no = #{order_no}
+					</if>
+					<if test="telephone!=null">
+						AND o.telephone = #{telephone}
+					</if>
+					 <!-- 车牌号 --> 
+					<if test="car_number!=null">
+					and exists(SELECT
+								car_number
+							FROM
+								bs_car b
+							WHERE
+								o.car_id = b.id and car_number=#{car_number} )
+					</if>
+					 <!--  预约时间 -->
+					 <if test="order_start_date!=null">
+						and <![CDATA[   date_format( o.order_date,'%Y-%m-%d %T')>=date_format(#{order_start_date},'%Y-%m-%d %T')    ]]>
+					</if>
+					<if test="order_end_date!=null">
+						and <![CDATA[   date_format( o.order_date,'%Y-%m-%d %T')<=date_format(#{order_end_date},'%Y-%m-%d %T')  ]]>
+					</if>
+					 <!-- 监测站 -->
+					 <if test="station_id!=null">
+						and o.station_id =#{station_id}
+					</if>
+					<if test="station_name!=null">
+						and cs.station_name =#{station_name}
+					</if>
+					<if test="status!=null">
+					 <!-- 订单状态 -->
+						and o.`status` =#{status}
+					</if>
+		 </where>
+	</select>
+	
+	<update id="updateOperation" parameterType="BsOrder">
+		update bs_order
+		<set>
+				<!--  订单- 联系电话 -->
+				<if test="telephone!=null">
+					telephone=#{telephone},
+				</if>
+				<!--   订单- 检测站Id -->
+				<if test="station_id!=null">
+					station_id=#{station_id},
+				</if>
+				<!--  订单状态 -->
+				<if test="status!=null">
+					status=#{status},
+				</if>
+				<!-- 检测结果图 -->
+				<if test="check_result_img!=null">
+					check_result_img=#{check_result_img},
+				</if>
+				<if test="update_user!=null">
+					update_user=#{update_user},
+				</if>
+				gmt_modify=now()
+		</set>
+		where  
+		id=#{id} 
+	</update>
+</mapper>
+

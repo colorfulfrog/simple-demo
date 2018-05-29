@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yxcoach.common.dao.BsCarDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="BsCar" id="responseMap">
+				<result property="id" column="id"/>
+				<result property="car_number" column="car_number"/>
+				<result property="regist_date" column="regist_date"/>
+				<result property="seat_num" column="seat_num"/>
+				<result property="weight" column="weight"/>
+				<result property="is_operate_car" column="is_operate_car"/>
+				<result property="is_need_appraise" column="is_need_appraise"/>
+				<result property="car_category" column="car_category"/>
+				<result property="frame_num" column="frame_num"/>
+				<result property="engine_num" column="engine_num"/>
+				<result property="type" column="type"/>
+				<result property="owner" column="owner"/>
+				<result property="status" column="status"/>
+				<result property="next_check_date" column="next_check_date"/>
+				<result property="gmt_create" column="gmt_create"/>
+				<result property="gmt_user" column="gmt_user"/>
+				<result property="gmt_modify" column="gmt_modify"/>
+				<result property="owner_name" column="owner_name"/>
+				<result property="telphone" column="telphone"/>
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT c.*,m.nickname owner_name FROM bs_car c left join bs_member m on c.owner=m.id 
+		 <where> 
+		 	<!--添加查询 -->
+		 	<if test="car_number!=null">
+				c.car_number like concat('%',#{car_number},'%')
+			</if>
+		 	<if test="type!=null">
+				and c.type = #{type}
+			</if>
+		 	<if test="owner_name!=null">
+				and m.nickname like concat('%',#{owner_name},'%')
+			</if>
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM bs_car c left join bs_member m on c.owner=m.id
+		<where> 
+		 	<!--添加查询 -->
+		 	<if test="car_number!=null">
+				c.car_number like concat('%',#{car_number},'%')
+			</if>
+		 	<if test="type!=null">
+				and c.type = #{type}
+			</if>
+		 	<if test="owner_name!=null">
+				and m.nickname like concat('%',#{owner_name},'%')
+			</if>
+		 </where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="BsCar" useGeneratedKeys="true" keyProperty="id">
+		insert into bs_car(car_number,regist_date,seat_num,weight,is_operate_car,is_need_appraise,car_category,frame_num,engine_num,type,owner,status,next_check_date,gmt_create,gmt_user,gmt_modify) values(#{car_number},#{regist_date},#{seat_num},#{weight},#{is_operate_car},#{is_need_appraise},#{car_category},#{frame_num},#{engine_num},#{type},#{owner},#{status},#{next_check_date},now(),#{gmt_user},now())
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT * FROM bs_car WHERE 
+		id=#{id} 
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="BsCar">
+		update bs_car
+		<set>
+				<if test="car_number!=null">
+					car_number=#{car_number},
+				</if>
+				<if test="regist_date!=null">
+					regist_date=#{regist_date},
+				</if>
+				<if test="seat_num!=null">
+					seat_num=#{seat_num},
+				</if>
+				<if test="weight!=null">
+					weight=#{weight},
+				</if>
+				<if test="is_operate_car!=null">
+					is_operate_car=#{is_operate_car},
+				</if>
+				<if test="is_need_appraise!=null">
+					is_need_appraise=#{is_need_appraise},
+				</if>
+				<if test="car_category!=null">
+					car_category=#{car_category},
+				</if>
+				<if test="frame_num!=null">
+					frame_num=#{frame_num},
+				</if>
+				<if test="engine_num!=null">
+					engine_num=#{engine_num},
+				</if>
+				<if test="type!=null">
+					type=#{type},
+				</if>
+				<if test="owner!=null">
+					owner=#{owner},
+				</if>
+				<if test="status!=null">
+					status=#{status},
+				</if>
+				<if test="next_check_date!=null">
+					next_check_date=#{next_check_date},
+				</if>
+				<if test="gmt_create!=null">
+					gmt_create=#{gmt_create},
+				</if>
+				<if test="gmt_user!=null">
+					gmt_user=#{gmt_user},
+				</if>
+					gmt_modify=now()
+		</set>
+		where  
+		id=#{id} 
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from bs_car where 
+		id=#{id} 
+	</delete>
+	<!-- 根据条件获取车辆列表 -->
+	<select id="getCarsByCon" parameterType="BsCar" resultMap="responseMap">
+		SELECT c.*,m.nickname owner_name FROM bs_car c left join bs_member m on c.owner=m.id
+		<where> 
+		 	<!--添加查询 -->
+		 	<if test="car_number!=null">
+				c.car_number like concat('%',#{car_number},'%')
+			</if>
+		 	<if test="type!=null">
+				and c.type = #{type}
+			</if>
+		 	<if test="owner!=null">
+				and c.owner = #{owner}
+			</if>
+		 	<if test="owner_name!=null">
+				and m.nickname like concat('%',#{owner_name},'%')
+			</if>
+		 </where> 
+	</select>
+	
+	<select id="selectBsCarCheckDate" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT c.*,m.nickname owner_name,m.telphone telphone FROM bs_car c left join bs_member m on c.owner=m.id 
+		where 1=1 
+		
+		and  <![CDATA[ date_format( next_check_date,'%Y-%m-%d %T')>=date_format(#{start_time},'%Y-%m-%d %T')  ]]>
+
+		and  <![CDATA[ date_format( next_check_date,'%Y-%m-%d %T')<=date_format(#{end_time},'%Y-%m-%d %T')  ]]>
+		
+	</select>
+	
+	<!-- 我的车辆 -->
+	<select id="selectMeCar" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT car_number,regist_date,frame_num,engine_num,type FROM bs_car WHERE 
+		owner=#{id} 
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	
+	<select id="selectMeCarCount" resultType="int" parameterType="java.util.Map">
+		SELECT count(1) FROM bs_car WHERE 
+		owner=#{id} 
+	</select>
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excels>
+	<!-- 车主导出 -->
+	<excel id="BsMemberExport" class="com.yxcoach.common.entity.BsMember"
+		sheetname="车主导出" defaultColumnWidth="5000" enableStyle="true">
+		<!-- <field name="id" title="id"/> -->
+		<field name="nickname" title="用户名" />
+		<field name="telphone" title="联系电话" />
+		<field name="type" title="用户类型"
+			cellValueConverter="com.yxcoach.common.service.excel.BsMemberTypeConverter" />
+		<field name="qrcode_url" title="二维码" />
+		<field name="invite_num" title="邀请人数" />
+		<field name="source" title="来源"
+			cellValueConverter="com.yxcoach.common.service.excel.BsMemberSourceConverter" />
+		<field name="gmt_create" title="注册时间" pattern="yyyy-MM-dd HH:mm:SS" />
+	</excel>
+</excels>

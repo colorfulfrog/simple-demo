@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yxcoach.common.dao.SysPersionDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="SysPersion" id="responseMap">
+				<result property="id" column="id"/>
+				<result property="m_id" column="m_id"/>
+				<result property="persion_name" column="persion_name"/>
+				<result property="persion" column="persion"/>
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM sys_persion 
+		 <where> 
+		 	<!--添加查询 -->
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM sys_persion
+		<where> 
+		 	<!--添加查询 -->
+		 </where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="SysPersion" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_persion(m_id,persion_name,persion) values(#{m_id},#{persion_name},#{persion})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT * FROM sys_persion WHERE 
+		id=#{id} 
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="SysPersion">
+		update sys_persion
+		<set>
+				<if test="m_id!=null">
+					m_id=#{m_id},
+				</if>
+				<if test="persion_name!=null">
+					persion_name=#{persion_name},
+				</if>
+				<if test="persion!=null">
+					persion=#{persion}
+				</if>
+		</set>
+		where  
+		id=#{id} 
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from sys_persion where 
+		id=#{id} 
+	</delete>
+
+	<delete id="deleteByMId" parameterType="long">
+		delete from sys_persion
+		where
+		m_id=#{mid}
+	</delete>
+	
+	<select id="SysPersionselectPage" parameterType="long" resultType="com.yxcoach.common.response.SysPersion_Resp">
+			SELECT * FROM sys_persion WHERE m_id=#{id} order by m_id,id
+	</select>
+	
+	<select id="selectByMenuId" parameterType="long" resultMap="responseMap">
+		SELECT * FROM sys_persion WHERE 
+		m_id=#{id} 
+	</select>
+</mapper>

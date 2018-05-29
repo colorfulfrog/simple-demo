@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yxcoach.common.dao.SysMenuDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="SysMenu" id="responseMap">
+				<result property="id" column="id"/>
+				<result property="menuName" column="menuName"/>
+				<result property="menu_url" column="menu_url"/>
+				<result property="function_type" column="function_type"/>
+				<result property="pid" column="pid"/>
+				<result property="sort_num" column="sort_num"/>
+				<result property="remake" column="remake"/>
+				<result property="gmt_create" column="gmt_create"/>
+				<result property="gmt_modify" column="gmt_modify"/>
+				<result property="gmt_user" column="gmt_user"/>
+				<result property="modify_user" column="modify_user"/>
+				<result property="vision" column="vision"/>
+				<result property="is_show" column="is_show"/>
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM sys_menu 
+		 <where> 
+		 	<!--添加查询 -->
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM sys_menu
+		<where> 
+		 	<!--添加查询 -->
+		 </where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="SysMenu" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_menu(menu_name,menu_url,function_type,pid,sort_num,remake,gmt_create,gmt_modify,gmt_user,modify_user,vision,is_show) values(#{menuName},#{menu_url},#{function_type},#{pid},#{sort_num},#{remake},now(),#{gmt_modify},#{gmt_user},#{modify_user},0,#{is_show})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT * FROM sys_menu WHERE 
+		id=#{id} 
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="SysMenu">
+		update sys_menu
+		<set>
+				<if test="menuName!=null">
+					menu_name=#{menuName},
+				</if>
+				<if test="menu_url!=null">
+					menu_url=#{menu_url},
+				</if>
+				<if test="function_type!=null">
+					function_type=#{function_type},
+				</if>
+				<if test="pid!=null">
+					pid=#{pid},
+				</if>
+				<if test="sort_num!=null">
+					sort_num=#{sort_num},
+				</if>
+				<if test="remake!=null">
+					remake=#{remake},
+				</if>
+				<if test="gmt_create!=null">
+					gmt_create=#{gmt_create},
+				</if>
+				<if test="gmt_modify!=null">
+					gmt_modify=#{gmt_modify},
+				</if>
+				<if test="gmt_user!=null">
+					gmt_user=#{gmt_user},
+				</if>
+				<if test="modify_user!=null">
+					modify_user=#{modify_user},
+				</if>
+				<if test="vision!=null">
+					vision=#{vision},
+				</if>
+				<if test="is_show!=null">
+					is_show=#{is_show}
+				</if>
+		</set>
+		where  
+		id=#{id} 
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from sys_menu where 
+		id=#{id} 
+	</delete>
+	
+	<select id="selectRoleMemu" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT sm.* FROM sys_union su ,sys_menu sm WHERE su.oid=sm.id and sm.is_show=1
+		<if test="rid!=null">
+			AND su.rid=#{rid} 
+		</if>
+		<if test="type!=null">
+			AND su.type=#{type}  
+		</if>
+		ORDER BY pid, sort_num
+	</select>
+	
+	<!-- 获取所有数据 -->
+	<select id="selectAll" parameterType="java.util.Map" resultMap="responseMap">
+	SELECT * FROM sys_menu
+	<where>
+		1=1
+		<if test="name!='' and name!=null">
+			and menu_name like '%${name}%'
+		</if>
+	</where>
+	ORDER BY pid, sort_num
+	</select>
+	
+	<select id="selectMemuAll2" resultMap="responseMap" parameterType="long">
+		SELECT * FROM sys_menu WHERE pid!=0 and pid=#{id}
+	</select>
+	
+	<delete id="deleteByPid" parameterType="long">
+		delete from sys_menu where pid=#{pid} 
+	</delete>
+	
+	<select id="selectMemuAll" resultMap="responseMap">
+		SELECT * FROM sys_menu WHERE pid=0
+	</select>
+</mapper>

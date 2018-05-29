@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yxcoach.common.dao.SysRoleDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="SysRole" id="responseMap">
+				<result property="id" column="id"/>
+				<result property="role_name" column="role_name"/>
+				<result property="role_type" column="role_type"/>
+				<result property="role_data" column="role_data"/>
+				<result property="remake" column="remake"/>
+				<result property="cid" column="cid"/>
+				<result property="oid" column="oid"/>
+				<result property="gmt_create" column="gmt_create"/>
+				<result property="gmt_modify" column="gmt_modify"/>
+				<result property="gmt_user" column="gmt_user"/>
+				<result property="modify_user" column="modify_user"/>
+				<result property="vision" column="vision"/>
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM sys_role 
+		 <where> 
+		 	<!--添加查询 -->
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM sys_role
+		<where> 
+		 	<!--添加查询 -->
+		 </where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="SysRole" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_role(role_name,role_type,role_data,remake,cid,oid,gmt_create,gmt_modify,gmt_user,modify_user,vision) values(#{role_name},#{role_type},#{role_data},#{remake},#{cid},#{oid},now(),#{gmt_modify},#{gmt_user},#{modify_user},1)
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT * FROM sys_role WHERE 
+		id=#{id} 
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="SysRole">
+		update sys_role
+		<set>
+				<if test="role_name!=null">
+					role_name=#{role_name},
+				</if>
+				<if test="role_type!=null">
+					role_type=#{role_type},
+				</if>
+				<if test="role_data!=null">
+					role_data=#{role_data},
+				</if>
+				<if test="remake!=null">
+					remake=#{remake},
+				</if>
+				<if test="cid!=null">
+					cid=#{cid},
+				</if>
+				<if test="oid!=null">
+					oid=#{oid},
+				</if>
+				<if test="gmt_create!=null">
+					gmt_create=#{gmt_create},
+				</if>
+				<if test="gmt_modify!=null">
+					gmt_modify=#{gmt_modify},
+				</if>
+				<if test="gmt_user!=null">
+					gmt_user=#{gmt_user},
+				</if>
+				<if test="modify_user!=null">
+					modify_user=#{modify_user},
+				</if>
+				<if test="vision!=null">
+					vision=#{vision}
+				</if>
+		</set>
+		where  
+		id=#{id} 
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from sys_role where 
+		id=#{id} 
+	</delete>
+	
+	<!-- 获取所有数据  -->
+	<select id="selectAll"  resultMap="responseMap">
+		SELECT * FROM sys_role where 1=1 
+	</select>
+	
+	<!-- 根据 角色编号 查询角色权限 -->
+	<select id="selecPersion" parameterType="java.util.Map" resultType="java.util.HashMap">
+		SELECT su.rid "rid",sm.persion "persion" FROM sys_union su ,sys_persion sm 
+		WHERE su.oid=sm.id AND su.rid=#{rid} AND su.type=2
+	</select>
+	
+	<select id="selectPage2" parameterType="java.util.Map"
+	resultMap="responseMap">
+	SELECT *  from sys_role 
+	<where>
+		1=1
+		<if test="roleName!=null">
+		and role_name like '%${roleName}%'
+	</if>
+	<if test="roleType!=null">
+		and role_type = #{roleType}
+	</if>
+	<if test="orderSql!=null">
+		${orderSql}
+	</if>
+	</where>		
+	LIMIT
+	<if test="PSIZE==null">10</if>
+	<if test="PSIZE!=null">#{PSIZE}</if>
+	offset
+	<if test="BEGIN==null">0</if>
+	<if test="BEGIN!=null">#{BEGIN}</if>
+</select>
+
+	<select id="selectPageCount2" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM sys_role
+		<where>
+			1=1
+			<if test="roleName!=null">
+				and role_name like '%${roleName}%'
+			</if>
+			<if test="roleType!=null">
+				and role_type = #{roleType}
+			</if>
+			<if test="orderSql!=null">
+				${orderSql}
+			</if>
+		</where>
+	</select>
+</mapper>

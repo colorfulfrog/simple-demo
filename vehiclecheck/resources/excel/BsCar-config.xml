@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excels>
+	<!-- 车辆导出 -->
+	<excel id="BsCarExport" class="com.yxcoach.common.entity.BsCar" sheetname="车辆导出" defaultColumnWidth="5000" enableStyle="true">
+		<!-- <field name="id" title="id"/> -->
+		<field name="car_number" title="车牌号"/>
+		<field name="frame_num" title="车架号"/>
+		<field name="engine_num" title="发动机号"/>
+		<field name="type" title="车型" cellValueConverter="com.yxcoach.common.service.CarTypeConverter"/>
+		<field name="next_check_date" title="下次检测日期" pattern="yyyy-MM-dd HH:mm:SS"/>
+		<field name="owner_name" title="所属车主"/>
+	</excel>
+	
+	<!-- 车辆导出 -->
+	<excel id="BsCarImport" class="com.yxcoach.common.entity.BsCar" sheetname="车辆导出" defaultColumnWidth="5000" enableStyle="true">
+		<!-- <field name="id" title="id"/> -->
+		<field name="car_number" title="车牌号"/>
+		<field name="frame_num" title="车架号"/>
+		<field name="engine_num" title="发动机号"/>
+		<field name="type" title="车型" cellValueConverter="com.yxcoach.common.service.CarTypeConverter"/>
+		<field name="next_check_date" title="下次检测日期" pattern="yyyy-MM-dd HH:mm:SS"/>
+		<field name="owner_name" title="所属车主"/>
+	</excel>
+</excels>

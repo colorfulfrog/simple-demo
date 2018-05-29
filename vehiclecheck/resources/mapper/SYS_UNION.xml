@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yxcoach.common.dao.SysUnionDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="SysUnion" id="responseMap">
+				<result property="id" column="id"/>
+				<result property="rid" column="rid"/>
+				<result property="oid" column="oid"/>
+				<result property="type" column="type"/>
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM sys_union 
+		 <where> 
+		 	<!--添加查询 -->
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM sys_union
+		<where> 
+		 	<!--添加查询 -->
+		 </where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="SysUnion" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_union(rid,oid,type) values(#{rid},#{oid},#{type})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT * FROM sys_union WHERE 
+		id=#{id} 
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="SysUnion">
+		update sys_union
+		<set>
+				<if test="rid!=null">
+					rid=#{rid},
+				</if>
+				<if test="oid!=null">
+					oid=#{oid},
+				</if>
+				<if test="type!=null">
+					type=#{type}
+				</if>
+		</set>
+		where oid=#{oid} and type=#{type}
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from sys_union where 
+		id=#{id} 
+	</delete>
+	
+	<select id="selectByRid" parameterType="long" resultMap="responseMap">
+		SELECT * FROM sys_union WHERE rid=#{rid} AND TYPE=#{type}
+	</select>
+	
+	<!-- 用户id查角色id -->
+	<select id="getByOid" parameterType="long" resultMap="responseMap">
+		SELECT * FROM sys_union WHERE oid=#{oid} AND TYPE=#{type}
+	</select>
+	
+	<delete id="deleteByRidType" parameterType="java.util.Map">
+		delete from sys_union where rid=#{rid} and type=#{type}
+	</delete>
+
+	<delete id="deleteByOid" parameterType="long">
+		delete from sys_union
+		where
+		oid=#{oid}
+		and type=4
+	</delete>
+	
+	<select id="selectUserRoles" parameterType="SysUnion" resultMap="responseMap">
+		select * from sys_union 
+		<where>
+			<if test="rid!=null">
+				and rid=#{rid}
+			</if>
+			<if test="oid!=null">
+				and oid=#{oid}
+			</if>
+			<if test="type!=null">
+				and type=#{type}
+			</if>
+		</where>
+	</select>
+</mapper>

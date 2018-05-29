@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yxcoach.common.dao.BsWithdrawCashBillDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="BsWithdrawCashBill" id="responseMap">
+				<result property="id" column="id"/>
+				<result property="member_id" column="member_id"/>
+				<result property="bank" column="bank"/>
+				<result property="bank_user_name" column="bank_user_name"/>
+				<result property="bank_account" column="bank_account"/>
+				<result property="withdraw_cash" column="withdraw_cash"/>
+				<result property="withdraw_cash_fee" column="withdraw_cash_fee"/>
+				<result property="total" column="total"/>
+				<result property="status" column="status"/>
+				<result property="gmt_create" column="gmt_create"/>
+				<result property="gmt_user" column="gmt_user"/>
+				<result property="modify_user" column="modify_user"/>
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM bs_withdraw_cash_bill 
+		 <where> 
+		 	<!--添加查询 -->
+		 </where>
+		LIMIT
+		<if test="PSIZE==null">10</if><if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if><if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM bs_withdraw_cash_bill
+		<where> 
+		 	<!--添加查询 -->
+		 </where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="BsWithdrawCashBill" useGeneratedKeys="true" keyProperty="id">
+		insert into bs_withdraw_cash_bill(member_id,bank,bank_user_name,bank_account,withdraw_cash,withdraw_cash_fee,total,status,gmt_create,gmt_user,modify_user) values(#{member_id},#{bank},#{bank_user_name},#{bank_account},#{withdraw_cash},#{withdraw_cash_fee},#{total},#{status},#{gmt_create},#{gmt_user},#{modify_user})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT * FROM bs_withdraw_cash_bill WHERE 
+		id=#{id} 
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="BsWithdrawCashBill">
+		update bs_withdraw_cash_bill
+		<set>
+				<if test="member_id!=null">
+					member_id=#{member_id},
+				</if>
+				<if test="bank!=null">
+					bank=#{bank},
+				</if>
+				<if test="bank_user_name!=null">
+					bank_user_name=#{bank_user_name},
+				</if>
+				<if test="bank_account!=null">
+					bank_account=#{bank_account},
+				</if>
+				<if test="withdraw_cash!=null">
+					withdraw_cash=#{withdraw_cash},
+				</if>
+				<if test="withdraw_cash_fee!=null">
+					withdraw_cash_fee=#{withdraw_cash_fee},
+				</if>
+				<if test="total!=null">
+					total=#{total},
+				</if>
+				<if test="status!=null">
+					status=#{status},
+				</if>
+				<if test="gmt_create!=null">
+					gmt_create=#{gmt_create},
+				</if>
+				<if test="gmt_user!=null">
+					gmt_user=#{gmt_user},
+				</if>
+				<if test="modify_user!=null">
+					modify_user=#{modify_user}
+				</if>
+		</set>
+		where  
+		id=#{id} 
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from bs_withdraw_cash_bill where 
+		id=#{id} 
+	</delete>
+</mapper>

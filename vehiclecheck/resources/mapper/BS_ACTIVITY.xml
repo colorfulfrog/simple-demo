@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxcoach.common.dao.BsActivityDAO">
+
+	<!-- 实体和表的映射关系 -->
+	<resultMap type="BsActivity" id="responseMap">
+		<result property="id" column="id" />
+		<result property="activity_name" column="activity_name" />
+		<result property="start_time" column="start_time" />
+		<result property="end_time" column="end_time" />
+		<result property="remark" column="remark" />
+		<result property="isenable" column="isenable" />
+		<result property="status" column="status" />
+		<result property="type" column="type" />
+		<result property="num" column="num" />
+		<result property="gmt_create" column="gmt_create" />
+		<result property="gmt_modify" column="gmt_modify" />
+		<result property="gmt_user" column="gmt_user" />
+		<result property="update_user" column="update_user" />
+	</resultMap>
+	<!-- 获取分页数据 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="responseMap">
+		SELECT * FROM bs_activity
+		<where>
+			<!--添加查询 -->
+			<if test="id!=null">
+				and id=#{id}
+			</if>
+			<if test="start_time!=null">
+				and  <![CDATA[ date_format( start_time,'%Y-%m-%d %T')>=date_format(#{start_time},'%Y-%m-%d %T')  ]]>
+			</if>
+			<if test="end_time!=null">
+				and  <![CDATA[ date_format( end_time,'%Y-%m-%d %T')<=date_format(#{end_time},'%Y-%m-%d %T')  ]]>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+		</where>
+		LIMIT
+		<if test="PSIZE==null">10</if>
+		<if test="PSIZE!=null">#{PSIZE}</if>
+		offset
+		<if test="BEGIN==null">0</if>
+		<if test="BEGIN!=null">#{BEGIN}</if>
+	</select>
+	<!-- 获取分页数据总条数 -->
+	<select id="selectPageCount" resultType="int" parameterType="java.util.Map">
+		SELECT COUNT(1) FROM bs_activity
+		<where>
+			<!--添加查询 -->
+			<if test="id!=null">
+				and id=#{id}
+			</if>
+			<if test="start_time!=null">
+				and  <![CDATA[ date_format( start_time,'%Y-%m-%d %T')>=date_format(#{start_time},'%Y-%m-%d %T')  ]]>
+			</if>
+			<if test="end_time!=null">
+				and  <![CDATA[ date_format( end_time,'%Y-%m-%d %T')<=date_format(#{end_time},'%Y-%m-%d %T')  ]]>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+		</where>
+	</select>
+	<!-- 添加单条记录 -->
+	<insert id="add" parameterType="BsActivity" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into
+		bs_activity(activity_name,start_time,end_time,remark,isenable,status,type,num,gmt_create,gmt_user,update_user)
+		values(#{activity_name},#{start_time},#{end_time},#{remark},#{isenable},#{status},#{type},#{num},now(),#{gmt_user},#{update_user})
+	</insert>
+	<!-- 获取单条记录 -->
+	<select id="getById" parameterType="long" resultMap="responseMap">
+		SELECT *
+		FROM bs_activity WHERE
+		id=#{id}
+	</select>
+	<!-- 更新单条记录 -->
+	<update id="update" parameterType="BsActivity">
+		update bs_activity
+		<set>
+			<if test="activity_name!=null">
+				activity_name=#{activity_name},
+			</if>
+			<if test="start_time!=null">
+				start_time=#{start_time},
+			</if>
+			<if test="end_time!=null">
+				end_time=#{end_time},
+			</if>
+			<if test="remark!=null">
+				remark=#{remark},
+			</if>
+			<if test="isenable!=null">
+				isenable=#{isenable},
+			</if>
+			<if test="status!=null">
+				status=#{status},
+			</if>
+			<if test="type!=null">
+				type=#{type},
+			</if>
+			<if test="num!=null">
+				num=#{num},
+			</if>
+			<!-- <if test="gmt_create!=null"> gmt_create=#{gmt_create}, </if> -->
+			<!-- <if test="gmt_modify!=null"> gmt_modify=#{gmt_modify}, </if> -->
+			<!-- <if test="gmt_user!=null"> gmt_user=#{gmt_user}, </if> -->
+			<if test="update_user!=null">
+				update_user=#{update_user},
+			</if>
+			gmt_modify=now()
+		</set>
+		where
+		id=#{id}
+	</update>
+	<!-- 删除单条记录 -->
+	<delete id="deleteById" parameterType="long">
+		delete from bs_activity
+		where
+		id=#{id}
+	</delete>
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.yxcoach.common.base.timetask"/>
+
+    <bean id="quartzScheduler" lazy-init="false" autowire="no"
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+               <!-- <ref bean="bsTaskTrigger"/> -->
+               <!-- 添加活动启动定时任务 -->
+               <!-- <ref bean="bsActivityStartTaskTrigger"/> --> 
+            </list>
+        </property>
+        <!-- 就是下面这句，因为该 bean 只能使用类反射来重构 -->
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+    </bean>
+
+     <!-- 定义调用对象和调用对象的方法 -->
+    <bean id="orderDateTaskJobDetail"
+          class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass">
+            <value>com.yxcoach.common.base.timetask.YxhlQuartzJobBean</value>
+        </property>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="targetObject" value="bsTask"/>
+                <entry key="targetMethod" value="taskMethod"/>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- 定义触发时间 -->
+    <bean id="bsTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="orderDateTaskJobDetail"/>
+        </property>
+        <!-- 每1分钟一次调度 -->
+      	<property name="cronExpression" value="0 0/1 * * * ?" />
+    </bean>
+    
+    <!-- 活动启动任务begin -->
+    <!-- 定义调用对象和调用对象的方法 -->
+    <bean id="bsActivityStartTaskJobDetail"
+          class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass">
+            <value>com.yxcoach.common.base.timetask.YxhlQuartzJobBean</value>
+        </property>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="targetObject" value="bsActivityStartTask"/>
+                <entry key="targetMethod" value="taskMethod"/>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- 定义触发时间 -->
+    <bean id="bsActivityStartTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="bsActivityStartTaskJobDetail"/>
+        </property>
+        <!-- 每1分钟一次调度 -->
+      	<property name="cronExpression" value="0 0/1 * * * ?" />
+    </bean>
+    <!-- 活动启动任务end -->
+
+</beans>
